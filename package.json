@@ -1,0 +1,10 @@
+{
+    "name": "to-done",
+    "version": "1.0.0",
+    "scripts": {
+        "start": "concurrently \"npm start --prefix frontend\" \"npm run dev --prefix backend\""
+    },
+    "dependencies": {
+        "concurrently": "^9.0.1"
+    }
+}
