@@ -3,6 +3,7 @@
 }
 #header {
     font-size: large;
+    margin-bottom: 1rem;
 }
 
 .container {
@@ -12,9 +13,24 @@
 
     width: 30rem;
 
-    border: 1px solid grey;
+    border: 2px solid grey;
     border-radius: 1rem;
 
     margin: 1rem;
     padding: 0.5rem;
+}
+
+.task-box {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px dashed grey;
+    border-radius: 0.5rem;
+}
+.task-box:hover {
+    background-color: darkblue;
+    border-color: transparent;
 }
