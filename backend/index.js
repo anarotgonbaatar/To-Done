@@ -25,12 +25,19 @@ app.get( '/api', ( req, res ) => {
 // Get all tasks
 app.get( '/api/tasks', async ( req, res ) => {
     try {
-        const tasks = await Task.find();    // Get all tasks from MongoDB
-        res.json( tasks );
+      User.findById("6708978f737ee2443a406ddf")
+      .populate('tasks', 'name completed')  // Populate the tasks with only `name` and `completed` fields
+      .exec((err, user) => {
+        if (err) {
+          return res.status(500).send({ message: 'Error fetching user tasks' });
+        }
+        res.status(200).json(user);
+      });
     } catch ( error ) {
         res.status( 500 ).json( { message: error.message } );
     }
 });
+
 // Create a new tasks
 app.post( '/api/tasks', async ( req, res ) => {
     const task = new Task({
@@ -38,13 +45,25 @@ app.post( '/api/tasks', async ( req, res ) => {
         completed: req.body.completed || false
     });
 
+
     try {
-        const newTask = await task.save();
-        res.status( 201 ).json( newTask );
+
+      //Save task first
+      await task.save();
+
+      const user = await User.findById("6708978f737ee2443a406ddf");
+
+      user.tasks.push(task._id);
+
+      await user.save();
+
+      res.status( 201 ).json( task );
     } catch ( error ) {
         res.status( 400 ).json( {message: error.message } );
     }
 });
+
+
 // Delete a task
 app.delete( 'api/tasks/:id', async ( req, res ) => {
     try {
