@@ -73,8 +73,8 @@ app.put( '/api/tasks/:id', async ( req, res ) => {
 app.post('/api/createUser/', async(req,res,next)=>{
   try{
     const user = new User({
-      userName: req.query.userName,
-      password: req.query.password
+      userName: req.body.userName,
+      password: req.body.password
     }
 
 )
