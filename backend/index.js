@@ -22,15 +22,19 @@ app.get( '/api', ( req, res ) => {
     res.json( { message: 'Backend says hello!' } );
 });
 
-// Get all tasks
+// Get all tasks based on _id property and derefrences the users collection
 app.get( '/api/tasks', async ( req, res ) => {
     try {
+
+      //Right now we're searching by mongo's _id property
       User.findById("6708978f737ee2443a406ddf")
       .populate('tasks', 'name completed')  // Populate the tasks with only `name` and `completed` fields
       .exec((err, user) => {
         if (err) {
           return res.status(500).send({ message: 'Error fetching user tasks' });
         }
+
+        //Returns the user's Task collection
         res.status(200).json(user);
       });
     } catch ( error ) {
@@ -48,15 +52,13 @@ app.post( '/api/tasks', async ( req, res ) => {
 
     try {
 
-      //Save task first
+      //Save task first, push task into the user's collection
       await task.save();
-
       const user = await User.findById("6708978f737ee2443a406ddf");
-
       user.tasks.push(task._id);
-
       await user.save();
 
+      //Created sucessfully
       res.status( 201 ).json( task );
     } catch ( error ) {
         res.status( 400 ).json( {message: error.message } );
