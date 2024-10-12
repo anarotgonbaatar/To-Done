@@ -34,3 +34,17 @@
     background-color: darkblue;
     border-color: transparent;
 }
+
+.tabs {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+.tabs button {
+    width: 100%;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
