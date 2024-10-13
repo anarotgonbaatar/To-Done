@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const app = express();
 const Task = require('./api/models/Task.js');
 const User = require('./api/models/User.js');
+const { apiRoute } = require("./api/routes/routes.js")
 
 // MongoDB connection string (replace <dbname> with your DB name)
 const mongoURI = 'mongodb://localhost:27017/todo-app';
@@ -16,53 +17,11 @@ mongoose.connect( mongoURI, { useNewUrlParser: true, useUnifiedTopology: true } 
 // Middleware
 app.use( cors() );  // Allows requests from React frontend
 app.use( express.json() );  // Parses JSON request bodies
+app.use("/api", apiRoute)
 
 // Route
 app.get( '/api', ( req, res ) => {
     res.json( { message: 'Backend says hello!' } );
-});
-
-// Get all tasks based on _id property and derefrences the users collection
-app.get( '/api/tasks', async ( req, res ) => {
-    try {
-
-      //Right now we're searching by mongo's _id property
-      User.findById("6708978f737ee2443a406ddf")
-      .populate('tasks', 'name completed')  // Populate the tasks with only `name` and `completed` fields
-      .exec((err, user) => {
-        if (err) {
-          return res.status(500).send({ message: 'Error fetching user tasks' });
-        }
-
-        //Returns the user's Task collection
-        res.status(200).json(user);
-      });
-    } catch ( error ) {
-        res.status( 500 ).json( { message: error.message } );
-    }
-});
-
-// Create a new tasks
-app.post( '/api/tasks', async ( req, res ) => {
-    const task = new Task({
-        name: req.body.name,
-        completed: req.body.completed || false
-    });
-
-
-    try {
-
-      //Save task first, push task into the user's collection
-      await task.save();
-      const user = await User.findById("6708978f737ee2443a406ddf");
-      user.tasks.push(task._id);
-      await user.save();
-
-      //Created sucessfully
-      res.status( 201 ).json( task );
-    } catch ( error ) {
-        res.status( 400 ).json( {message: error.message } );
-    }
 });
 
 
@@ -90,25 +49,6 @@ app.put( '/api/tasks/:id', async ( req, res ) => {
     }
 });
 
-// Post request to create a User
-app.post('/api/createUser/', async(req,res,next)=>{
-  try{
-    const user = new User({
-      userName: req.body.userName,
-      password: req.body.password
-    }
-
-)
-  console.log(user.userName + "    " + user.password);
-  await user.save();
-  res.status(201).send({ message: 'User created successfully'}); 
-  res.status(201);
-}catch(error){
-  console.log(error);
-  response.status()
-}
-
-})
 
 // Start server
 const PORT = process.env.PORT || 4000;
