@@ -45,7 +45,7 @@ function App() {
 
     const deleteTask = async ( id ) => {
         try {
-            await fetch( 'http://localhost:5000/api/tasks/${id}', { method: 'DELETE' } )
+            await fetch( `http://localhost:5000/api/tasks/${id}`, { method: 'DELETE' } )
             setTasks( tasks.filter( task => task._id !== id ) )
         } catch ( error ) {
             console.error( 'Error deleting task:', error )
@@ -54,7 +54,7 @@ function App() {
 
     const completeTask = async ( id, completed ) => {
         try {
-            await fetch( 'http://localhost:5000/api/tasks/${id}', {
+            await fetch( `http://localhost:5000/api/tasks/${id}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify( { completed: !completed } )
@@ -81,10 +81,10 @@ function App() {
                     <div className='auth-section'>
                         {/* Tabs for Sign In and Sign Up */}
                         <div className='tabs'>
-                            <button className={ activeTab == 'signin' ? 'active': '' } onClick={ () => setActiveTab( 'signin' ) }>
+                            <button className={ activeTab === 'signin' ? 'active': '' } onClick={ () => setActiveTab( 'signin' ) }>
                                 Sign In
                             </button>
-                            <button className={ activeTab == 'signup' ? 'active': '' } onClick={ () => setActiveTab( 'signup' ) }>
+                            <button className={ activeTab === 'signup' ? 'active': '' } onClick={ () => setActiveTab( 'signup' ) }>
                                 Sign Up
                             </button>
                         </div>
@@ -93,16 +93,16 @@ function App() {
                         { activeTab === 'signin' ? (
                             <form onSubmit={ handleLogin }>
                                 <input
-                                    type='email'
-                                    placeholder='Email'
-                                    value={ email }
-                                    onChange={ (e) => setEmail( e.target.value ) }
+                                    type='text'
+                                    placeholder='Username'
+                                    value={ username }
+                                    onChange={ (e) => setUsername( e.target.value ) }
                                     required
                                 />
                                 <input
                                     type='password'
                                     placeholder='Password'
-                                    value={ username }
+                                    value={ password }
                                     onChange={ (e) => setPassword( e.target.value ) }
                                     required
                                 />
@@ -113,7 +113,7 @@ function App() {
                             <form onSubmit={ handleSignup }>
                                 <input
                                     type='text'
-                                    placeholder='Name'
+                                    placeholder='Username'
                                     value={ username }
                                     onChange={ (e) => setUsername( e.target.value ) }
                                     required
@@ -128,7 +128,7 @@ function App() {
                                 <input
                                     type='password'
                                     placeholder='Password'
-                                    value={ username }
+                                    value={ password }
                                     onChange={ (e) => setPassword( e.target.value ) }
                                     required
                                 />
@@ -154,7 +154,7 @@ function App() {
                                     checked={ task.completed }
                                     onChange={ () => completeTask( task._id, task.completed ) }
                                 />
-                                <span className={ "task-name ${ task.completed ? 'completed' : '' }" }>
+                                <span className={ `task-name ${ task.completed ? 'completed' : '' }` }>
                                     { task.name }
                                 </span>
                                 <button onClick={ () => deleteTask( task._id ) }><FaTrash className='icon'/></button>
