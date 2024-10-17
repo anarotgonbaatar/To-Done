@@ -36,14 +36,51 @@ const encryptPassword = async (req, res, next) =>{
       req.newUser = user;
       next();
   });
-  
+
   }catch(err){
     console.log(err);
   }
   
 }
 
+const comparePassword = async (req,res,next) =>{
+  try{
+    const password = req.body.password;
+    //Retrieve user by username
+    User.findOne({userName: req.body.userName})
+    .then( user => {
+      console.log(password);
+      console.log(user.password)
+      bcrypt.compare(password, user.password)
+      .then(correct =>{
+        if(correct){
+          //Password is correct go auth the user
+          next()
+        }else{
+          console.log("Password is incorrect, ending early");
+          return res.status(200).json({"status": "Request processed, password is incorrect"})
+        }
+      })
+      .catch(err => {console.log(err)})
+    })
+  }catch(err){
+    console.log(err);
+  }
+}
+
+const authUser = async (req,res,next) =>{
+  try{
+    console.log("Inside of authUser")
+    res.status(200).json({"status": "Correctly Inside authUser"});
+  }catch(err){
+    console.log(err)
+  }
+
+}
+
 module.exports = {
   checkUserExist,
-  encryptPassword
+  encryptPassword,
+  comparePassword,
+  authUser
 }

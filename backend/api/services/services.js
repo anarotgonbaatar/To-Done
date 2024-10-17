@@ -46,6 +46,9 @@ const createNewTask = async (userTask) => {
     }
 }
 
+const getUser = async(req, res) => {
+  
+}
 
 
 module.exports = {
