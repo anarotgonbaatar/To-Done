@@ -1,10 +1,10 @@
-const { getTaskList, createNewTask, createNewUser } = require("../services/services.js");
+const { getTaskList, createNewTask, checkUserExist } = require("../services/services.js");
 
 // Get Controllers
 const getUserTasks = async (req, res) => {
     try {
         //getting list from _id of a user
-        const userId = "670b327e9be5e81e0322f35e";
+        const userId = "6708978f737ee2443a406ddf";
         const tasks = await getTaskList(userId);
         res.status(200).json({ tasks });
     } catch (err) {
@@ -24,10 +24,10 @@ const createTask = async (req, res) => {
     }
 };
 
-const createUser = async (req, res) => {
+const createUser = async (req,res) => {
     try {
-        const user = req.body;
-        await createNewUser(user);
+        newUser = req.newUser;
+        await newUser.save();
         res.status(200).json({"status": "User Created Successfully"});
     } catch (err) {
         console.log(err);

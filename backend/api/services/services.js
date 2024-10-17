@@ -46,23 +46,9 @@ const createNewTask = async (userTask) => {
     }
 }
 
-const createNewUser = async (userInfo) => {
-    try{
-        const user = new User({
-          userName: userInfo.userName,
-          password: userInfo.password
-        }
-    
-    )
-      console.log(user.userName + "    " + user.password);
-      await user.save();
-    }catch(error){
-      console.log(error);
-    }
-}
+
 
 module.exports = {
     getTaskList,
     createNewTask,
-    createNewUser
 }
