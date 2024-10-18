@@ -16,9 +16,9 @@ const getUserTasks = async (req, res) => {
 // Post Controllers
 const createTask = async (req, res) => {
     try {
+        console.log(req.body)
         const task = req.body
-        await createNewTask(task);
-        res.status(200).json({"status": "Task Created Successfully"});
+        createNewTask(req,res, task);
     } catch (err) {
         console.log(err)
     }

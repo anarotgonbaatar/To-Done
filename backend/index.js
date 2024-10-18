@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const app = express();
 const Task = require('./api/models/Task.js');
 const User = require('./api/models/User.js');
+const cookieParser = require("cookie-parser");
 const { apiRoute } = require("./api/routes/routes.js")
 
 // MongoDB connection string (replace <dbname> with your DB name)
@@ -17,6 +18,7 @@ mongoose.connect( mongoURI, { useNewUrlParser: true, useUnifiedTopology: true } 
 // Middleware
 app.use( cors() );  // Allows requests from React frontend
 app.use( express.json() );  // Parses JSON request bodies
+app.use(cookieParser()); // Allows us to access cookies from requests
 app.use("/api", apiRoute)
 
 // Route
