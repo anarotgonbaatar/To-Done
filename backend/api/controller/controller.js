@@ -4,6 +4,9 @@ const {
   checkUserExist,
 } = require('../services/services.js');
 
+const User = require('../models/User');
+const Task = require('../models/Task');
+
 // Get Controllers
 const getUserTasks = async (req, res) => {
   try {
@@ -27,6 +30,18 @@ const createTask = async (req, res) => {
   }
 };
 
+const deleteTask = async (req, res) => {
+  try {
+    const task = await Task.findByIdAndDelete(req.params.id);
+    if (!task) {
+      return res.status(404).json({ message: 'No Task, Not Found' });
+    }
+    res.status(200).json({ status: 'Delete Task Successful' });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const createUser = async (req, res) => {
   try {
     newUser = req.newUser;
@@ -37,8 +52,22 @@ const createUser = async (req, res) => {
   }
 };
 
+const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'No User, Not Found' });
+    }
+    res.status(200).json({ status: 'Delete User Successful' });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 module.exports = {
   getUserTasks,
   createTask,
+  deleteTask,
   createUser,
+  deleteUser,
 };
