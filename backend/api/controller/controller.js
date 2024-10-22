@@ -11,7 +11,7 @@ const Task = require('../models/Task');
 const getUserTasks = async (req, res) => {
   try {
     //getting list from _id of a user
-    const userId = '6708978f737ee2443a406ddf';
+    const userId = req.user;
     const tasks = await getTaskList(userId);
     res.status(200).json({ tasks });
   } catch (err) {

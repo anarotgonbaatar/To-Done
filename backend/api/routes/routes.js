@@ -16,7 +16,7 @@ const {
 const apiRoute = Router();
 
 // Get
-apiRoute.get('/tasks', getUserTasks);
+apiRoute.get('/tasks', verifyToken, getUserTasks);
 
 // Post
 apiRoute.post('/login', comparePassword, authUser);
