@@ -8,7 +8,7 @@ const { getUserByEmail, getTaskList } = require('../services/services.js');
 const checkUserExist = async (req, res, next) => {
   try {
     //Check if username is taken.
-    await User.findOne({ userName: req.body.username }).then((userDoc) => {
+    await User.findOne({ username: req.body.username }).then((userDoc) => {
       if (userDoc) {
         //Return back if username is taken
         return res.status(409).json({ status: 'Username is already taken' });
@@ -28,7 +28,7 @@ const encryptPassword = async (req, res, next) => {
     return bcrypt.hash(req.body.password, 12).then((hashedPassword) => {
       const user = new User({
         email: req.body.email,
-        userName: req.body.userName,
+        username: req.body.username,
         password: hashedPassword,
       });
 
@@ -45,7 +45,7 @@ const comparePassword = async (req, res, next) => {
   try {
     const password = req.body.password;
     //Retrieve user by username
-    User.findOne({ userName: req.body.username }).then((user) => {
+    User.findOne({ username: req.body.username }).then((user) => {
       //compare password with hashed Password
       bcrypt
         .compare(password, user.password)
