@@ -17,15 +17,15 @@ const apiRoute = Router();
 
 // Get
 apiRoute.get('/tasks', getUserTasks);
-apiRoute.get('/login', comparePassword, authUser);
 
 // Post
+apiRoute.post('/login', comparePassword, authUser);
 apiRoute.post('/tasks', verifyToken, createTask);
 apiRoute.post('/createUser', checkUserExist, encryptPassword, createUser);
 
 // Delete
-apiRoute.delete('/tasks/:id', verifyToken, deleteTask)
-apiRoute.delete('/removeUser/:id', verifyToken, deleteUser)
+apiRoute.delete('/tasks/:id', verifyToken, deleteTask);
+apiRoute.delete('/removeUser/:id', verifyToken, deleteUser);
 
 module.exports = {
   apiRoute,
