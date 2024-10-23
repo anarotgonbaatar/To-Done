@@ -1,7 +1,9 @@
 const {
   getTaskList,
   createNewTask,
-  checkUserExist,
+  getUserByEmail,
+  getUserByUsername,
+  // checkUserExist, -> No Longer Exists?
 } = require('../services/services.js');
 
 const User = require('../models/User');
