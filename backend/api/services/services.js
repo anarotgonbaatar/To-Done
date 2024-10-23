@@ -27,6 +27,36 @@ const getTaskList = async (userId) => {
   }
 };
 
+const getUserByEmail = async (email) => {
+  try {
+    //Retrieve user by username
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'Cannot find user'});
+    }
+
+    return user;
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: 'Getting UserByEmail Error' });
+  }
+};
+
+const getUserByUsername  = async (username) => {
+  try {
+    //Retrieve user by username
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: 'Cannot find user'});
+    }
+
+    return user;
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: 'Getting getUserByUsername Error' });
+  }
+};
+
 // Post Services
 const createNewTask = async (req, res, userTask) => {
   try {
@@ -46,19 +76,9 @@ const createNewTask = async (req, res, userTask) => {
   }
 };
 
-//getUser by email
-const getUserByEmail = async (req, res) => {
-  try {
-    //Retrieve user by username
-    const user = await User.findOne({ email: req.body.email });
-    return user;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
 module.exports = {
   getTaskList,
   createNewTask,
   getUserByEmail,
+  getUserByUsername,
 };
