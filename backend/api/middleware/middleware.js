@@ -57,6 +57,10 @@ const comparePassword = async (req, res, next) => {
     const password = req.body.password;
     //Retrieve user by username
     User.findOne({ username: req.body.username }).then((user) => {
+      //First check if we get returned back a null value meaning user does not exit
+      if (!user) {
+        return res.status(400).json({ message: 'User not found' });
+      }
       //compare password with hashed Password
       bcrypt
         .compare(password, user.password)
