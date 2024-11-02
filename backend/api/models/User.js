@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true },
   resetToken: String,
   restTokenExpiration: Date,
-  userName: { type: String, required: true },
+  username: { type: String, required: true },
   password: { type: String, required: true },
   tasks: [{ type: mongoose.Types.ObjectId, ref: 'Task' }],
 });

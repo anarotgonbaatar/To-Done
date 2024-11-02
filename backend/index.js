@@ -6,6 +6,7 @@ const Task = require('./api/models/Task.js');
 const User = require('./api/models/User.js');
 const cookieParser = require('cookie-parser');
 const { apiRoute } = require('./api/routes/routes.js');
+require('dotenv').config();
 
 // MongoDB connection string (replace <dbname> with your DB name)
 const mongoURI = 'mongodb://localhost:27017/todo-app';

@@ -2,7 +2,18 @@ const User = require('../models/User.js');
 const Task = require('../models/Task.js');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+const sendGridTransport = require('nodemailer-sendgrid-transport');
+const crypto = require('crypto');
 
+//Define our Sendgrid transporter
+const transporter = nodemailer.createTransport(
+  sendGridTransport({
+    auth: {
+      api_key: process.env.SEND_GRID_API_KEY,
+    },
+  })
+);
 const { getUserByEmail, getTaskList } = require('../services/services.js');
 
 const checkUserExist = async (req, res, next) => {
@@ -106,10 +117,29 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
+const generatePasswordToken = async (req, res, next) => {
+  try {
+    crypto.randomBytes(32, (err, buff) => {
+      if (err) {
+        console.log(err);
+      } else if (buff) {
+        //Assign the random bytes as token and have it be a valid token for 1hr
+        const token = buff;
+        user.resetToken.push(token);
+        user.resetTokenExpiration.push(Date.now() + 3600000);
+        return user.save();
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 module.exports = {
   checkUserExist,
   encryptPassword,
   comparePassword,
   authUser,
   verifyToken,
+  generatePasswordToken,
 };
