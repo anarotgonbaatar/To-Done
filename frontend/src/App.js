@@ -16,7 +16,15 @@ function App() {
     if (user) {
       const getTasks = async () => {
         try {
-          const response = await fetch('http://localhost:5000/api/tasks');
+          const response = await fetch('http://localhost:5000/api/tasks', {
+            mode: 'cors',
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            //body: JSON.stringify({ username: username, password: password }),
+          });
           const data = await response.json();
           setTasks(data);
         } catch (error) {
@@ -43,12 +51,14 @@ function App() {
       const response = await fetch('http://localhost:5000/api/login', {
         mode: 'cors',
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ username: username, password: password }),
       });
       const data = await response.json();
+      setUser(data);
     } catch (err) {
       console.log('Error while attempting to login', err);
     }

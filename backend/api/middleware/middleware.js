@@ -74,7 +74,7 @@ const comparePassword = async (req, res, next) => {
             next();
           } else {
             return res
-              .status(200)
+              .status(401)
               .json({ status: 'Request processed, password is incorrect' });
           }
         })
