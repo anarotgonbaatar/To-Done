@@ -8,6 +8,7 @@ const {
 
 const User = require('../models/User');
 const Task = require('../models/Task');
+const mongoose = require('mongoose');
 
 // Get Controllers
 const getUserTasks = async (req, res) => {
@@ -34,11 +35,19 @@ const createTask = async (req, res) => {
 
 const deleteTask = async (req, res) => {
   try {
-    const task = await Task.findByIdAndDelete(req.params.id);
+    const task = await Task.findByIdAndDelete(
+      new mongoose.Types.ObjectId(req.params.id)
+    );
+    //Removes all refrences of that share that taskIid
+    await User.updateMany(
+      { tasks: req.params.id },
+      { $pull: { tasks: req.params.id } }
+    );
     if (!task) {
       return res.status(404).json({ message: 'No Task, Not Found' });
+    } else {
+      return res.status(200).json({ status: 'Delete Task Successful' });
     }
-    res.status(200).json({ status: 'Delete Task Successful' });
   } catch (err) {
     console.log(err);
   }

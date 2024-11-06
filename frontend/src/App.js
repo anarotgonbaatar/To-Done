@@ -26,7 +26,7 @@ function App() {
             //body: JSON.stringify({ username: username, password: password }),
           });
           const data = await response.json();
-          setTasks(data);
+          setTasks(data.tasks);
         } catch (error) {
           console.error('Error getting tasks from backend: ', error);
         }
@@ -74,8 +74,9 @@ function App() {
     try {
       await fetch(`http://localhost:5000/api/tasks/${id}`, {
         method: 'DELETE',
+        credentials: 'include',
       });
-      setTasks(tasks.filter((task) => task._id !== id));
+      setTasks(tasks.filter((tasks) => tasks._id !== id));
     } catch (error) {
       console.error('Error deleting task:', error);
     }
@@ -189,7 +190,6 @@ function App() {
       {user && (
         <div className="container" id="tasks-container">
           <span>Tasks</span>
-
           {/* Populate with tasks from backend here */}
           {tasks.length > 0 ? (
             tasks.map((task) => (
