@@ -1,54 +1,118 @@
 #title {
-    font-size: xx-large;
+  font-size: xx-large;
 }
 #header {
-    font-size: large;
-    margin-bottom: 1rem;
+  font-size: large;
+  margin-bottom: 1rem;
 }
 
 .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    width: 30rem;
-
-    border: 2px solid grey;
-    border-radius: 1rem;
-
-    margin: 1rem;
-    padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 30rem;
+  border: 2px solid grey;
+  border-radius: 1rem;
+  margin: 1rem;
+  padding: 0.5rem;
 }
 
 .task-box {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px dashed grey;
-    border-radius: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px dashed grey;
+  border-radius: 0.5rem;
 }
 .task-box:hover {
-    background-color: darkblue;
-    border-color: transparent;
+  background-color: darkblue;
+  border-color: transparent;
 }
 
 .tabs {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
 }
 button {
-    width: 100%;
-    padding: 1rem;
+  width: auto;
+  padding: 1rem;
+  margin: 4px;
 }
 
 form {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 input {
-    padding: 0.5rem;
+  justify-items: center;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.overlay-container {
+  visibility: hidden;
+  position: absolute;
+  flex-direction: column;
+  opacity: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 100%;
+  width: 100%;
+  background: rgba(100, 100, 100, 0.4);
+  backdrop-filter: blur(5px);
+  justify-content: center;
+  align-content: center;
+  transition: all 0.75s ease-in;
+}
+
+.overlay-container.visible {
+  visibility: visible;
+  display: flex;
+  opacity: 1;
+}
+
+.popout-box {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  flex-direction: column;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
+  height: 400px;
+  width: 400px;
+  padding: 24px;
+  background: rgb(100, 100, 100, 0.65);
+}
+.text-field {
+  justify-items: center;
+  width: auto;
+  height: 35px;
+  align-items: center;
+  border-radius: 6px;
+  padding-left: 10px;
+  margin: 4px;
+}
+
+.exit-button {
+  top: 5%;
+  right: 5%;
+  position: absolute;
+  align-content: center;
+  padding: 0px;
+  width: 30px;
+  height: 30px;
+  background-color: rgb(150, 150, 150);
+  border-radius: 5px;
+  border: none;
+}
+
+.exit-button:hover {
+  background-color: rgb(210, 210, 210);
 }
