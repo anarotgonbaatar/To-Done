@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const sendGridTransport = require('nodemailer-sendgrid-transport');
 const crypto = require('crypto');
+require('dotenv').config();
 
 //Define our Sendgrid transporter
 const transporter = nodemailer.createTransport(
@@ -96,8 +97,9 @@ const authUser = async (req, res, next) => {
     res.status(200).cookie('token', token, {
       httpOnly: true,
     });
+
+    //Return back User object with token and taskID's
     res.json({
-      Message: 'Should return back token and attach the user Object',
       user: res.user,
     });
   } catch (err) {
@@ -121,22 +123,51 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
+//Generates a password token to be emailed
 const generatePasswordToken = async (req, res, next) => {
   try {
-    crypto.randomBytes(32, (err, buff) => {
-      if (err) {
-        console.log(err);
-      } else if (buff) {
-        //Assign the random bytes as token and have it be a valid token for 1hr
-        const token = buff;
-        user.resetToken.push(token);
-        user.resetTokenExpiration.push(Date.now() + 3600000);
-        return user.save();
-      }
-    });
+    const user = await getUserByEmail(req.body.email);
+    if (user) {
+      crypto.randomBytes(24, async (err, buff) => {
+        if (err) {
+          console.log(err);
+        } else if (buff) {
+          //Assign the random bytes as token and have it be a valid token for 1hr
+          const token = buff.toString('hex');
+          user.resetToken = token;
+          user.resetTokenExpiration = Date.now() + 3600000;
+          await user.save();
+          req.user = user; //To be used in next function
+          next();
+        }
+      });
+    } else if (!user) {
+      console.log('User was not found');
+      return res.status(404).json({ message: 'User was not found' });
+    }
   } catch (err) {
     console.log(err);
   }
+};
+
+//Handles sending the email to the user with their valid reset token
+const emailToken = async (req, res) => {
+  return transporter
+    .sendMail({
+      to: req.user.email,
+      from: process.env.SENDER_EMAIL,
+      subject: 'Password Reset Token',
+      html: `<h1>Here is your password reset token ${req.user.resetToken}</h1>`,
+    })
+    .then((result) => {
+      return res.status(200).json({ message: result });
+    })
+    .catch((error) => {
+      console.error(error);
+      return res
+        .status(500)
+        .json({ message: 'Internal error while sending email.' });
+    });
 };
 
 module.exports = {
@@ -146,4 +177,5 @@ module.exports = {
   authUser,
   verifyToken,
   generatePasswordToken,
+  emailToken,
 };
