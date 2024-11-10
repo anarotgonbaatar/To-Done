@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaTrash } from 'react-icons/fa';
 import './App.css';
+import { IoMdClose } from 'react-icons/io';
 
 function App() {
   // States for tasks and authentication
@@ -10,6 +11,9 @@ function App() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [resetToken, setResetToken] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   // Get tasks from backend WHEN user is logged in
   useEffect(() => {
@@ -35,6 +39,15 @@ function App() {
     }
   }, [user]); // Only run when 'user' changes
 
+  //Enables and disables the reset password form to pop up
+  function toggleResetForm() {
+    const container = document.querySelector('.overlay-container');
+    if (container) {
+      container.classList.toggle('visible');
+    } else {
+      console.log('Container is empty.');
+    }
+  }
   // Sign up function
   const handleSignup = (e) => {
     // ...
@@ -136,6 +149,7 @@ function App() {
               <form onSubmit={handleLogin}>
                 <input
                   type="text"
+                  class="text-field"
                   placeholder="Username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -143,6 +157,7 @@ function App() {
                 />
                 <input
                   type="password"
+                  class="text-field"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -157,6 +172,7 @@ function App() {
               <form onSubmit={handleSignup}>
                 <input
                   type="text"
+                  class="text-field"
                   placeholder="Username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -164,6 +180,7 @@ function App() {
                 />
                 <input
                   type="email"
+                  class="text-field"
                   placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -171,6 +188,7 @@ function App() {
                 />
                 <input
                   type="password"
+                  class="text-field"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -183,6 +201,61 @@ function App() {
               </form>
             )}
           </div>
+        )}
+        {/*Reset password option is only there when not logged in*/}
+        {!user && (
+          <form>
+            <span>
+              Forgot your password?
+              <button type="button" className="btn" onClick={toggleResetForm}>
+                Reset Password
+              </button>
+            </span>
+            <div className="overlay-container">
+              <div className="popout-box">
+                <button
+                  type="button"
+                  className="exit-button"
+                  onClick={toggleResetForm}
+                >
+                  <IoMdClose />
+                </button>
+                <span>Insert your email for a password reset</span>
+                <input
+                  type="email"
+                  class="text-field"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <input
+                  type="text"
+                  class="text-field"
+                  placeholder="Reset Token"
+                  value={resetToken}
+                  onChange={(e) => setResetToken(e.target.value)}
+                />
+                <input
+                  type="password"
+                  class="text-field"
+                  placeholder="New Password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+                <input
+                  type="password"
+                  class="text-field"
+                  placeholder="Confirm password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+
+                <button type="button" className="btn">
+                  Reset Password
+                </button>
+              </div>
+            </div>
+          </form>
         )}
       </header>
 

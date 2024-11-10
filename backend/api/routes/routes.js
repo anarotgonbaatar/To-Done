@@ -13,13 +13,14 @@ const {
   authUser,
   verifyToken,
   generatePasswordToken,
+  emailToken,
 } = require('../middleware/middleware.js');
 const { getUserByEmail } = require('../services/services.js');
 const apiRoute = Router();
 
 // Get
 apiRoute.get('/tasks', verifyToken, getUserTasks);
-apiRoute.get('/reset', getUserByEmail, generatePasswordToken);
+apiRoute.get('/reset', generatePasswordToken, emailToken);
 
 // Post
 apiRoute.post('/login', comparePassword, authUser);
