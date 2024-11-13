@@ -20,12 +20,13 @@ const apiRoute = Router();
 
 // Get
 apiRoute.get('/tasks', verifyToken, getUserTasks);
-apiRoute.get('/reset', generatePasswordToken, emailToken);
 
 // Post
 apiRoute.post('/login', comparePassword, authUser);
 apiRoute.post('/tasks', verifyToken, createTask);
 apiRoute.post('/createUser', checkUserExist, encryptPassword, createUser);
+apiRoute.post('/resetPassword');
+apiRoute.post('/resetToken', generatePasswordToken, emailToken);
 
 // Delete
 apiRoute.delete('/tasks/:id', verifyToken, deleteTask);

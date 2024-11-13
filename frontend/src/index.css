@@ -1,17 +1,16 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 
-    transition: all 0.3s ease
+  transition: all 0.3s ease;
 }
 
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: black;
-    color: white;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  font-family: 'Arial', sans-serif;
+  background-color: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

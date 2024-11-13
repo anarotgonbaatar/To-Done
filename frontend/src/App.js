@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaTrash } from 'react-icons/fa';
+import { FaTeeth, FaTrash } from 'react-icons/fa';
 import './App.css';
 import { IoMdClose } from 'react-icons/io';
 
@@ -14,6 +14,8 @@ function App() {
   const [resetToken, setResetToken] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState('');
 
   // Get tasks from backend WHEN user is logged in
   useEffect(() => {
@@ -41,12 +43,65 @@ function App() {
 
   //Enables and disables the reset password form to pop up
   function toggleResetForm() {
-    const container = document.querySelector('.overlay-container');
-    if (container) {
-      container.classList.toggle('visible');
-    } else {
-      console.log('Container is empty.');
+    try {
+      const container = document.querySelector('.overlay-container');
+      if (container) {
+        container.classList.toggle('visible');
+      } else {
+        console.log('Container is empty.');
+      }
+    } catch (error) {
+      console.log(error);
     }
+  }
+
+  //Request a reset password token with the use of the user's email.
+  async function requestToken() {
+    try {
+      const response = await fetch('http://localhost:5000/api/resetToken', {
+        mode: 'cors',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: email }),
+      });
+
+      //Email is valid, now make other textfields appear
+      if (response.status === 200) {
+        //Toggle aditional text-fields for reset token and new password
+        const textfields = document.getElementById('reset-password');
+        textfields.classList.toggle('visible');
+        setMessage('Check email for your password reset token!');
+        setStatus('success');
+      } else if (response.status === 404) {
+        console.log('Before setting message and status');
+        setMessage('Email was not found. Please try again.');
+        setStatus('error');
+      }
+    } catch (error) {}
+  }
+  function RenderMessage({ message, status }) {
+    return <span className={`status-message ${status}`}> {message} </span>;
+  }
+
+  async function resetPassword() {
+    try {
+      //Make sure the user has inserted the same password twice
+      if (newPassword === confirmPassword) {
+        const response = await fetch(
+          'http://localhost.com/5000/resetPassword',
+          {
+            mode: 'cors',
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+      } else {
+      }
+    } catch (error) {}
   }
   // Sign up function
   const handleSignup = (e) => {
@@ -228,30 +283,32 @@ function App() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
-                <input
-                  type="text"
-                  class="text-field"
-                  placeholder="Reset Token"
-                  value={resetToken}
-                  onChange={(e) => setResetToken(e.target.value)}
-                />
-                <input
-                  type="password"
-                  class="text-field"
-                  placeholder="New Password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-                <input
-                  type="password"
-                  class="text-field"
-                  placeholder="Confirm password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-
-                <button type="button" className="btn">
-                  Reset Password
+                {<RenderMessage message={message} status={status} />}
+                <div id="reset-password">
+                  <input
+                    type="text"
+                    class="text-field"
+                    placeholder="Reset Token"
+                    value={resetToken}
+                    onChange={(e) => setResetToken(e.target.value)}
+                  />
+                  <input
+                    type="password"
+                    class="text-field"
+                    placeholder="New Password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                  <input
+                    type="password"
+                    class="text-field"
+                    placeholder="Confirm password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                </div>
+                <button type="button" className="btn" onClick={requestToken}>
+                  Request Token
                 </button>
               </div>
             </div>

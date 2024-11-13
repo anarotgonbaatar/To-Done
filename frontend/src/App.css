@@ -65,7 +65,7 @@ input {
   width: 100%;
   background: rgba(100, 100, 100, 0.4);
   backdrop-filter: blur(5px);
-  justify-content: center;
+  justify-content: flex-end;
   align-content: center;
   transition: all 0.75s ease-in;
 }
@@ -91,10 +91,8 @@ input {
   background: rgb(100, 100, 100, 0.65);
 }
 .text-field {
-  justify-items: center;
   width: auto;
   height: 35px;
-  align-items: center;
   border-radius: 6px;
   padding-left: 10px;
   margin: 4px;
@@ -115,4 +113,40 @@ input {
 
 .exit-button:hover {
   background-color: rgb(210, 210, 210);
+}
+
+#reset-password {
+  display: none;
+  flex-direction: column;
+  opacity: 0;
+}
+
+#reset-password.visible {
+  display: flex;
+  opacity: 1;
+}
+
+.status-message {
+  height: 35px;
+  width: auto;
+  display: none;
+  padding: inherit;
+  border-radius: 6px;
+  margin: 4px;
+  text-align: center;
+  font-size: 12pt;
+  justify-content: center;
+  padding: 15px;
+  flex-direction: column;
+  background-color: gray;
+}
+
+.status-message.success {
+  display: flex;
+  background-color: rgba(76, 175, 80, 0.8);
+}
+
+.status-message.error {
+  display: flex;
+  background-color: rgba(244, 67, 54, 0.8);
 }

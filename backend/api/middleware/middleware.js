@@ -126,7 +126,8 @@ const verifyToken = async (req, res, next) => {
 //Generates a password token to be emailed
 const generatePasswordToken = async (req, res, next) => {
   try {
-    const user = await getUserByEmail(req.body.email);
+    const user = await getUserByEmail(res, req.body.email);
+
     if (user) {
       crypto.randomBytes(24, async (err, buff) => {
         if (err) {
@@ -141,9 +142,6 @@ const generatePasswordToken = async (req, res, next) => {
           next();
         }
       });
-    } else if (!user) {
-      console.log('User was not found');
-      return res.status(404).json({ message: 'User was not found' });
     }
   } catch (err) {
     console.log(err);
