@@ -155,7 +155,7 @@ const emailToken = async (req, res) => {
       to: req.user.email,
       from: process.env.SENDER_EMAIL,
       subject: 'Password Reset Token',
-      html: `<h1>Here is your password reset token ${req.user.resetToken}</h1>`,
+      html: `<h1>Here is your password reset token http://localhost:3000/reset-password?token=${req.user.resetToken}</h1>`,
     })
     .then((result) => {
       return res.status(200).json({ message: result });
@@ -168,6 +168,26 @@ const emailToken = async (req, res) => {
     });
 };
 
+const compareToken = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ resetToken: req.body.resetToken });
+    if (user) {
+      //If user is valid and token is valid
+      if (Date.now() < user.resetTokenExpiration) {
+        //Move onto controller to update mongodb
+        req.user = user;
+        next();
+      }
+    } else if (!user) {
+      return res.status(404).json({ message: 'User is not found' });
+    } else {
+      return res.status(500).json({ message: 'Internal Error.' });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   checkUserExist,
   encryptPassword,
@@ -176,4 +196,5 @@ module.exports = {
   verifyToken,
   generatePasswordToken,
   emailToken,
+  compareToken,
 };

@@ -75,10 +75,24 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const resetPassword = async (req, res) => {
+  try {
+    bcrypt.hashedPassword(req.body.newPassword, 12).then((hashedPassword) => {
+      req.user.password = hashedPassword;
+
+      return res
+        .status(200)
+        .message({ message: 'Password updated successfuly.' });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 module.exports = {
   getUserTasks,
   createTask,
   deleteTask,
   createUser,
   deleteUser,
+  resetPassword,
 };

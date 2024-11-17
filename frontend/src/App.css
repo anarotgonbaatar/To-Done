@@ -67,7 +67,7 @@ input {
   backdrop-filter: blur(5px);
   justify-content: flex-end;
   align-content: center;
-  transition: all 0.75s ease-in;
+  transition: all 1s ease-in;
 }
 
 .overlay-container.visible {
@@ -149,4 +149,20 @@ input {
 .status-message.error {
   display: flex;
   background-color: rgba(244, 67, 54, 0.8);
+}
+
+#reset-token-button {
+  display: inline-block;
+}
+
+#reset-token-button.visible {
+  display: none;
+}
+
+#reset-password-button {
+  display: none;
+}
+
+#reset-password-button.visible {
+  display: inline-block;
 }

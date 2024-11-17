@@ -72,6 +72,10 @@ function App() {
         //Toggle aditional text-fields for reset token and new password
         const textfields = document.getElementById('reset-password');
         textfields.classList.toggle('visible');
+        const tokenButton = document.getElementById('reset-token-button');
+        tokenButton.classList.toggle('visible');
+        const resetButton = document.getElementById('reset-password-button');
+        resetButton.classList.toggle('visible');
         setMessage('Check email for your password reset token!');
         setStatus('success');
       } else if (response.status === 404) {
@@ -94,12 +98,24 @@ function App() {
           {
             mode: 'cors',
             method: 'POST',
+            credentials: 'include',
             headers: {
               'Content-Type': 'application/json',
             },
+            body: JSON.stringify({ newPassword: newPassword }),
           },
         );
+
+        if (response.status(200)) {
+          setMessage('Password reset correctly.');
+          setStatus('success');
+        } else {
+          setMessage('Error occured while trying to reset password.');
+          setStatus('error');
+        }
       } else {
+        setMessage('Passwords do not match.');
+        setStatus('error');
       }
     } catch (error) {}
   }
@@ -307,8 +323,21 @@ function App() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
                 </div>
-                <button type="button" className="btn" onClick={requestToken}>
+                <button
+                  type="button"
+                  className="btn"
+                  id="reset-token-button"
+                  onClick={requestToken}
+                >
                   Request Token
+                </button>
+                <button
+                  type="button"
+                  className="btn"
+                  id="reset-password-button"
+                  onClick={resetPassword}
+                >
+                  Reset Your Password
                 </button>
               </div>
             </div>

@@ -5,6 +5,7 @@ const {
   deleteTask,
   createUser,
   deleteUser,
+  resetPassword,
 } = require('../controller/controller.js');
 const {
   checkUserExist,
@@ -14,6 +15,8 @@ const {
   verifyToken,
   generatePasswordToken,
   emailToken,
+  compareToken,
+  verifyResetToken,
 } = require('../middleware/middleware.js');
 const { getUserByEmail } = require('../services/services.js');
 const apiRoute = Router();
@@ -27,10 +30,11 @@ apiRoute.post('/tasks', verifyToken, createTask);
 apiRoute.post('/createUser', checkUserExist, encryptPassword, createUser);
 apiRoute.post('/resetPassword');
 apiRoute.post('/resetToken', generatePasswordToken, emailToken);
+apiRoute.post('/resetPassword', compareToken, resetPassword);
 
 // Delete
 apiRoute.delete('/tasks/:id', verifyToken, deleteTask);
-apiRoute.delete('/removeUser/:id', verifyToken, deleteUser);
+//apiRoute.delete('/removeUser/:id', verifyResetToken, deleteUser);
 
 module.exports = {
   apiRoute,
