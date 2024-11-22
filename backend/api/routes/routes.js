@@ -30,7 +30,9 @@ apiRoute.post('/tasks', verifyToken, createTask);
 apiRoute.post('/createUser', checkUserExist, encryptPassword, createUser);
 apiRoute.post('/resetPassword');
 apiRoute.post('/resetToken', generatePasswordToken, emailToken);
-apiRoute.post('/resetPassword', compareToken, resetPassword);
+
+//Patch
+apiRoute.patch('/resetPassword', compareToken, resetPassword);
 
 // Delete
 apiRoute.delete('/tasks/:id', verifyToken, deleteTask);

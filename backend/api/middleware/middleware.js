@@ -169,12 +169,18 @@ const emailToken = async (req, res) => {
 };
 
 const compareToken = async (req, res, next) => {
+  console.log('Requestrecieved inside compare token');
   try {
     const user = await User.findOne({ resetToken: req.body.resetToken });
+    console.log(user);
     if (user) {
       //If user is valid and token is valid
+      console.log('Before validating token expiration');
+      console.log(Date.now());
+      console.log(user.resetTokenExpiration);
       if (Date.now() < user.resetTokenExpiration) {
         //Move onto controller to update mongodb
+        console.log('Token is valid');
         req.user = user;
         next();
       }

@@ -1,11 +1,11 @@
+// States for tasks and authentication
 import React, { useState, useEffect } from 'react';
 import { FaTeeth, FaTrash } from 'react-icons/fa';
 import './App.css';
 import { IoMdClose } from 'react-icons/io';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 
 function App() {
-  // States for tasks and authentication
   const [tasks, setTasks] = useState([]);
   const [user, setUser] = useState(null); // No user at first
   const [activeTab, setActiveTab] = useState('signin');
@@ -20,6 +20,7 @@ function App() {
   const [containerVisible, setContainerVisible] = useState('');
   const [resetPasswordVisible, setResetPassowrdVisible] = useState('');
   let location = useLocation();
+  let [params] = useSearchParams();
 
   // Get tasks from backend WHEN user is logged in
   useEffect(() => {
@@ -85,24 +86,29 @@ function App() {
     return <span className={`status-message ${status}`}> {message} </span>;
   }
 
-  async function resetPassword(token) {
+  async function resetPassword() {
     try {
       //Make sure the user has inserted the same password twice
+      const token = params.get('token');
+      console.log('This is token:', token);
       if (newPassword === confirmPassword) {
         const response = await fetch(
-          'http://localhost.com/5000/resetPassword',
+          'http://localhost:5000/api/resetPassword',
           {
             mode: 'cors',
-            method: 'POST',
+            method: 'PATCH',
             credentials: 'include',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ token: token, newPassword: newPassword }),
+            body: JSON.stringify({
+              resetToken: token,
+              newPassword: newPassword,
+            }),
           },
         );
 
-        if (response.status(200)) {
+        if (response.status === 200) {
           setMessage('Password reset correctly.');
           setStatus('success');
         } else {
@@ -113,7 +119,9 @@ function App() {
         setMessage('Passwords do not match.');
         setStatus('error');
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log('Error:', error);
+    }
   }
   // Sign up function
   const handleSignup = (e) => {
@@ -314,9 +322,9 @@ function App() {
                   >
                     Request Token
                   </button>
+                  {<RenderMessage message={message} status={status} />}
                 </div>
               )}
-              {<RenderMessage message={message} status={status} />}
               {resetPasswordVisible && (
                 <div className="popout-box">
                   <button
@@ -344,14 +352,10 @@ function App() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
-                  <button
-                    type="button"
-                    className="btn"
-                    id="reset-password-button"
-                    onClick={resetPassword}
-                  >
+                  <button type="button" className="btn" onClick={resetPassword}>
                     Reset Your Password
                   </button>
+                  {<RenderMessage message={message} status={status} />}
                 </div>
               )}
             </div>
