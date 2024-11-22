@@ -67,7 +67,7 @@ input {
   backdrop-filter: blur(5px);
   justify-content: flex-end;
   align-content: center;
-  transition: all 1s ease-in;
+  transition: all 1 s ease-in;
 }
 
 .overlay-container.visible {
@@ -160,9 +160,14 @@ input {
 }
 
 #reset-password-button {
-  display: none;
+  display: flex;
 }
 
 #reset-password-button.visible {
   display: inline-block;
+}
+
+.popout-box-text {
+  text-align: center;
+  padding-bottom: 20px;
 }

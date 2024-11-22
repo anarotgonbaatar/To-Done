@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaTeeth, FaTrash } from 'react-icons/fa';
 import './App.css';
 import { IoMdClose } from 'react-icons/io';
+import { useLocation } from 'react-router-dom';
 
 function App() {
   // States for tasks and authentication
@@ -11,11 +12,14 @@ function App() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [resetToken, setResetToken] = useState('');
+  const [resetTokenVisible, setResetTokenVisible] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState('');
+  const [containerVisible, setContainerVisible] = useState('');
+  const [resetPasswordVisible, setResetPassowrdVisible] = useState('');
+  let location = useLocation();
 
   // Get tasks from backend WHEN user is logged in
   useEffect(() => {
@@ -41,19 +45,16 @@ function App() {
     }
   }, [user]); // Only run when 'user' changes
 
-  //Enables and disables the reset password form to pop up
-  function toggleResetForm() {
-    try {
-      const container = document.querySelector('.overlay-container');
-      if (container) {
-        container.classList.toggle('visible');
-      } else {
-        console.log('Container is empty.');
+  useEffect(() => {
+    if (location.pathname === '/reset-password') {
+      try {
+        setContainerVisible(true);
+        setResetPassowrdVisible(true);
+      } catch (error) {
+        console.log('Error:', error);
       }
-    } catch (error) {
-      console.log(error);
     }
-  }
+  }, [location.pathname]); //Makes sure to have the HTML load before checking for change
 
   //Request a reset password token with the use of the user's email.
   async function requestToken() {
@@ -70,26 +71,21 @@ function App() {
       //Email is valid, now make other textfields appear
       if (response.status === 200) {
         //Toggle aditional text-fields for reset token and new password
-        const textfields = document.getElementById('reset-password');
-        textfields.classList.toggle('visible');
-        const tokenButton = document.getElementById('reset-token-button');
-        tokenButton.classList.toggle('visible');
-        const resetButton = document.getElementById('reset-password-button');
-        resetButton.classList.toggle('visible');
+
         setMessage('Check email for your password reset token!');
         setStatus('success');
       } else if (response.status === 404) {
-        console.log('Before setting message and status');
         setMessage('Email was not found. Please try again.');
         setStatus('error');
       }
     } catch (error) {}
   }
+
   function RenderMessage({ message, status }) {
     return <span className={`status-message ${status}`}> {message} </span>;
   }
 
-  async function resetPassword() {
+  async function resetPassword(token) {
     try {
       //Make sure the user has inserted the same password twice
       if (newPassword === confirmPassword) {
@@ -102,7 +98,7 @@ function App() {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ newPassword: newPassword }),
+            body: JSON.stringify({ token: token, newPassword: newPassword }),
           },
         );
 
@@ -124,8 +120,6 @@ function App() {
     // ...
   };
 
-  const controller = new AbortController();
-  const signal = controller.signal;
   // Login function
   const handleLogin = async (e) => {
     // ...
@@ -278,68 +272,88 @@ function App() {
           <form>
             <span>
               Forgot your password?
-              <button type="button" className="btn" onClick={toggleResetForm}>
+              <button
+                type="button"
+                className="btn"
+                onClick={() => {
+                  setContainerVisible(true);
+                  setResetTokenVisible(true);
+                }}
+              >
                 Reset Password
               </button>
             </span>
-            <div className="overlay-container">
-              <div className="popout-box">
-                <button
-                  type="button"
-                  className="exit-button"
-                  onClick={toggleResetForm}
-                >
-                  <IoMdClose />
-                </button>
-                <span>Insert your email for a password reset</span>
-                <input
-                  type="email"
-                  class="text-field"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                {<RenderMessage message={message} status={status} />}
-                <div id="reset-password">
+            <div
+              className={`overlay-container ${containerVisible ? 'visible' : ''} `}
+            >
+              {resetTokenVisible && (
+                <div className="popout-box">
+                  <button
+                    type="button"
+                    className="exit-button"
+                    onClick={() => {
+                      setContainerVisible(false);
+                      setResetTokenVisible(false);
+                    }}
+                  >
+                    <IoMdClose />
+                  </button>
+                  <span>Insert your email for a password reset</span>
                   <input
-                    type="text"
-                    class="text-field"
-                    placeholder="Reset Token"
-                    value={resetToken}
-                    onChange={(e) => setResetToken(e.target.value)}
+                    type="email"
+                    className="text-field"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
+                  <button
+                    type="button"
+                    className="btn"
+                    id="reset-token-button"
+                    onClick={requestToken}
+                  >
+                    Request Token
+                  </button>
+                </div>
+              )}
+              {<RenderMessage message={message} status={status} />}
+              {resetPasswordVisible && (
+                <div className="popout-box">
+                  <button
+                    type="button"
+                    className="exit-button"
+                    onClick={() => {
+                      setContainerVisible(false);
+                      setResetPassowrdVisible(false);
+                    }}
+                  >
+                    <IoMdClose />
+                  </button>
+                  <span className="popout-box-text">Reset your password</span>
                   <input
                     type="password"
-                    class="text-field"
+                    className="text-field"
                     placeholder="New Password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                   />
                   <input
                     type="password"
-                    class="text-field"
+                    className="text-field"
                     placeholder="Confirm password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
+                  <button
+                    type="button"
+                    className="btn"
+                    id="reset-password-button"
+                    onClick={resetPassword}
+                  >
+                    Reset Your Password
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  className="btn"
-                  id="reset-token-button"
-                  onClick={requestToken}
-                >
-                  Request Token
-                </button>
-                <button
-                  type="button"
-                  className="btn"
-                  id="reset-password-button"
-                  onClick={resetPassword}
-                >
-                  Reset Your Password
-                </button>
-              </div>
+              )}
             </div>
           </form>
         )}
