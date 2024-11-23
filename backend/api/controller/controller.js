@@ -82,6 +82,10 @@ const resetPassword = async (req, res) => {
     bcrypt.hash(req.body.newPassword, 12).then((hashedPassword) => {
       console.log(hashedPassword);
       req.user.password = hashedPassword;
+
+      //Only use token once
+      req.user.resetToken = undefined;
+      req.user.resetTokenExpiration = undefined;
       req.user.save();
       return res.status(200).send();
     });

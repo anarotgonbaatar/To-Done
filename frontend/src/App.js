@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { FaTeeth, FaTrash } from 'react-icons/fa';
 import './App.css';
 import { IoMdClose } from 'react-icons/io';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -21,6 +21,7 @@ function App() {
   const [resetPasswordVisible, setResetPassowrdVisible] = useState('');
   let location = useLocation();
   let [params] = useSearchParams();
+  let navigate = useNavigate();
 
   // Get tasks from backend WHEN user is logged in
   useEffect(() => {
@@ -34,7 +35,6 @@ function App() {
             headers: {
               'Content-Type': 'application/json',
             },
-            //body: JSON.stringify({ username: username, password: password }),
           });
           const data = await response.json();
           setTasks(data.tasks);
@@ -43,8 +43,12 @@ function App() {
         }
       };
       getTasks();
+    } else {
+      setTasks([]); // Clear tasks when user is logged out
+      console.log('Tasks: ', tasks);
+      console.log('User: ', user);
     }
-  }, [user]); // Only run when 'user' changes
+  }, [user]);
 
   useEffect(() => {
     if (location.pathname === '/reset-password') {
@@ -109,8 +113,14 @@ function App() {
         );
 
         if (response.status === 200) {
-          setMessage('Password reset correctly.');
+          setMessage('Password reset correctly. You will be redirected soon.');
           setStatus('success');
+          await setTimeout(() => {
+            setContainerVisible(false);
+            setResetPassowrdVisible(false);
+
+            navigate('/');
+          }, 3000);
         } else {
           setMessage('Error occured while trying to reset password.');
           setStatus('error');
@@ -143,17 +153,28 @@ function App() {
         },
         body: JSON.stringify({ username: username, password: password }),
       });
-      const data = await response.json();
-      setUser(data);
+      if (response.status === 200) {
+        const data = await response.json();
+        setUser(data);
+      } else {
+        setUser(null); // Reset user on failed login
+        setTasks([]);
+      }
     } catch (err) {
       console.log('Error while attempting to login', err);
     }
+
+    console.log(user);
   };
 
-  // Logout function
   const handleLogout = () => {
+    console.log('Before logout - tasks:', tasks);
+
+    // Clear user and tasks
     setUser(null);
     setTasks([]);
+
+    console.log('After logout - tasks should be empty:', tasks);
   };
 
   const deleteTask = async (id) => {
