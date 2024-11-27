@@ -65,9 +65,9 @@ input {
   width: 100%;
   background: rgba(100, 100, 100, 0.4);
   backdrop-filter: blur(5px);
-  justify-content: center;
+  justify-content: flex-end;
   align-content: center;
-  transition: all 0.75s ease-in;
+  transition: all 1 s ease-in;
 }
 
 .overlay-container.visible {
@@ -91,10 +91,8 @@ input {
   background: rgb(100, 100, 100, 0.65);
 }
 .text-field {
-  justify-items: center;
   width: auto;
   height: 35px;
-  align-items: center;
   border-radius: 6px;
   padding-left: 10px;
   margin: 4px;
@@ -115,4 +113,62 @@ input {
 
 .exit-button:hover {
   background-color: rgb(210, 210, 210);
+}
+
+#reset-password {
+  display: none;
+  flex-direction: column;
+  opacity: 0;
+}
+
+#reset-password.visible {
+  display: flex;
+  opacity: 1;
+}
+
+.status-message {
+  height: auto;
+  width: 100%;
+  display: none;
+  border-radius: 6px;
+  margin: 4px auto;
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-size: 12pt;
+  justify-content: center;
+  align-self: stretch;
+  padding: 10px;
+  flex-shrink: 1;
+}
+
+.status-message.success {
+  display: flex;
+  background-color: rgba(76, 175, 80, 0.8);
+}
+
+.status-message.error {
+  display: flex;
+  background-color: rgba(244, 67, 54, 0.8);
+}
+
+#reset-token-button {
+  display: inline-block;
+}
+
+#reset-token-button.visible {
+  display: none;
+}
+
+#reset-password-button {
+  display: flex;
+}
+
+#reset-password-button.visible {
+  display: inline-block;
+}
+
+.popout-box-text {
+  text-align: center;
+  padding-bottom: 20px;
 }

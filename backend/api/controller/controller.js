@@ -9,6 +9,7 @@ const {
 const User = require('../models/User');
 const Task = require('../models/Task');
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 // Get Controllers
 const getUserTasks = async (req, res) => {
@@ -75,10 +76,28 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const resetPassword = async (req, res) => {
+  console.log('Made it into resetPasssword');
+  try {
+    bcrypt.hash(req.body.newPassword, 12).then((hashedPassword) => {
+      console.log(hashedPassword);
+      req.user.password = hashedPassword;
+
+      //Only use token once
+      req.user.resetToken = undefined;
+      req.user.resetTokenExpiration = undefined;
+      req.user.save();
+      return res.status(200).send();
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 module.exports = {
   getUserTasks,
   createTask,
   deleteTask,
   createUser,
   deleteUser,
+  resetPassword,
 };

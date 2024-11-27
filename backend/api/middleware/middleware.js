@@ -126,7 +126,8 @@ const verifyToken = async (req, res, next) => {
 //Generates a password token to be emailed
 const generatePasswordToken = async (req, res, next) => {
   try {
-    const user = await getUserByEmail(req.body.email);
+    const user = await getUserByEmail(res, req.body.email);
+
     if (user) {
       crypto.randomBytes(24, async (err, buff) => {
         if (err) {
@@ -141,9 +142,6 @@ const generatePasswordToken = async (req, res, next) => {
           next();
         }
       });
-    } else if (!user) {
-      console.log('User was not found');
-      return res.status(404).json({ message: 'User was not found' });
     }
   } catch (err) {
     console.log(err);
@@ -157,7 +155,7 @@ const emailToken = async (req, res) => {
       to: req.user.email,
       from: process.env.SENDER_EMAIL,
       subject: 'Password Reset Token',
-      html: `<h1>Here is your password reset token ${req.user.resetToken}</h1>`,
+      html: `<h1>Here is your password reset token http://localhost:3000/reset-password?token=${req.user.resetToken}</h1>`,
     })
     .then((result) => {
       return res.status(200).json({ message: result });
@@ -170,6 +168,32 @@ const emailToken = async (req, res) => {
     });
 };
 
+const compareToken = async (req, res, next) => {
+  console.log('Requestrecieved inside compare token');
+  try {
+    const user = await User.findOne({ resetToken: req.body.resetToken });
+    console.log(user);
+    if (user) {
+      //If user is valid and token is valid
+      console.log('Before validating token expiration');
+      console.log(Date.now());
+      console.log(user.resetTokenExpiration);
+      if (Date.now() < user.resetTokenExpiration) {
+        //Move onto controller to update mongodb
+        console.log('Token is valid');
+        req.user = user;
+        next();
+      }
+    } else if (!user) {
+      return res.status(404).json({ message: 'User is not found' });
+    } else {
+      return res.status(500).json({ message: 'Internal Error.' });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   checkUserExist,
   encryptPassword,
@@ -178,4 +202,5 @@ module.exports = {
   verifyToken,
   generatePasswordToken,
   emailToken,
+  compareToken,
 };

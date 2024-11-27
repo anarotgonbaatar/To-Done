@@ -27,12 +27,13 @@ const getTaskList = async (userId) => {
   }
 };
 
-const getUserByEmail = async (email) => {
+const getUserByEmail = async (res, email) => {
   try {
     //Retrieve user by username
     const user = await User.findOne({ email: email });
     if (!user) {
-      return res.status(404).json({ message: 'Cannot find user' });
+      res.status(404).json({ message: 'Cannot find user' });
+      return null;
     }
 
     return user;
@@ -42,14 +43,16 @@ const getUserByEmail = async (email) => {
   }
 };
 
-const getUserByUsername = async (username) => {
+const getUserByUsername = async (res, username) => {
   try {
     //Retrieve user by username
     const user = await User.findOne({ username });
     if (!user) {
-      return res.status(404).json({ message: 'Cannot find user' });
+      //Return back null since no user was found
+      console.log(user);
+      return;
     }
-
+    console.log('user:', user);
     return user;
   } catch (err) {
     console.log(err);

@@ -1,19 +1,27 @@
+// States for tasks and authentication
 import React, { useState, useEffect } from 'react';
-import { FaTrash } from 'react-icons/fa';
+import { FaTeeth, FaTrash } from 'react-icons/fa';
 import './App.css';
 import { IoMdClose } from 'react-icons/io';
+import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 
 function App() {
-  // States for tasks and authentication
   const [tasks, setTasks] = useState([]);
   const [user, setUser] = useState(null); // No user at first
   const [activeTab, setActiveTab] = useState('signin');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [resetToken, setResetToken] = useState('');
+  const [resetTokenVisible, setResetTokenVisible] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState('');
+  const [containerVisible, setContainerVisible] = useState('');
+  const [resetPasswordVisible, setResetPassowrdVisible] = useState('');
+  let location = useLocation();
+  let [params] = useSearchParams();
+  let navigate = useNavigate();
 
   // Get tasks from backend WHEN user is logged in
   useEffect(() => {
@@ -27,7 +35,6 @@ function App() {
             headers: {
               'Content-Type': 'application/json',
             },
-            //body: JSON.stringify({ username: username, password: password }),
           });
           const data = await response.json();
           setTasks(data.tasks);
@@ -36,16 +43,95 @@ function App() {
         }
       };
       getTasks();
-    }
-  }, [user]); // Only run when 'user' changes
-
-  //Enables and disables the reset password form to pop up
-  function toggleResetForm() {
-    const container = document.querySelector('.overlay-container');
-    if (container) {
-      container.classList.toggle('visible');
     } else {
-      console.log('Container is empty.');
+      setTasks([]); // Clear tasks when user is logged out
+      console.log('Tasks: ', tasks);
+      console.log('User: ', user);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (location.pathname === '/reset-password') {
+      try {
+        setContainerVisible(true);
+        setResetPassowrdVisible(true);
+      } catch (error) {
+        console.log('Error:', error);
+      }
+    }
+  }, [location.pathname]); //Makes sure to have the HTML load before checking for change
+
+  //Request a reset password token with the use of the user's email.
+  async function requestToken() {
+    try {
+      const response = await fetch('http://localhost:5000/api/resetToken', {
+        mode: 'cors',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: email }),
+      });
+
+      //Email is valid, now make other textfields appear
+      if (response.status === 200) {
+        //Toggle aditional text-fields for reset token and new password
+
+        setMessage('Check email for your password reset token!');
+        setStatus('success');
+      } else if (response.status === 404) {
+        setMessage('Email was not found. Please try again.');
+        setStatus('error');
+      }
+    } catch (error) {}
+  }
+
+  function RenderMessage({ message, status }) {
+    return <span className={`status-message ${status}`}> {message} </span>;
+  }
+
+  async function resetPassword() {
+    try {
+      //Make sure the user has inserted the same password twice
+      const token = params.get('token');
+      console.log('This is token:', token);
+      if (newPassword === confirmPassword) {
+        const response = await fetch(
+          'http://localhost:5000/api/resetPassword',
+          {
+            mode: 'cors',
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              resetToken: token,
+              newPassword: newPassword,
+            }),
+          },
+        );
+
+        if (response.status === 200) {
+          setMessage('Password reset correctly. You will be redirected soon.');
+          setStatus('success');
+          await setTimeout(() => {
+            setContainerVisible(false);
+            setResetPassowrdVisible(false);
+            setMessage(null);
+            setStatus(null);
+            navigate('/');
+          }, 3000);
+        } else {
+          setMessage('Error occured while trying to reset password.');
+          setStatus('error');
+        }
+      } else {
+        setMessage('Passwords do not match.');
+        setStatus('error');
+      }
+    } catch (error) {
+      console.log('Error:', error);
     }
   }
   // Sign up function
@@ -53,8 +139,6 @@ function App() {
     // ...
   };
 
-  const controller = new AbortController();
-  const signal = controller.signal;
   // Login function
   const handleLogin = async (e) => {
     // ...
@@ -70,17 +154,33 @@ function App() {
         },
         body: JSON.stringify({ username: username, password: password }),
       });
-      const data = await response.json();
-      setUser(data);
+      if (response.status === 200) {
+        const data = await response.json();
+        setUser(data);
+        setMessage(null);
+        setStatus(null);
+      } else if (response.status === 401 || response.status === 400) {
+        setMessage('Incorrect Username/Password. Please try agan.');
+        setStatus('error');
+      } else {
+        setUser(null); // Reset user on failed login
+        setTasks([]);
+      }
     } catch (err) {
       console.log('Error while attempting to login', err);
     }
+
+    console.log(user);
   };
 
-  // Logout function
   const handleLogout = () => {
+    console.log('Before logout - tasks:', tasks);
+
+    // Clear user and tasks
     setUser(null);
     setTasks([]);
+
+    console.log('After logout - tasks should be empty:', tasks);
   };
 
   const deleteTask = async (id) => {
@@ -167,6 +267,7 @@ function App() {
                 <button type="submit" className="btn">
                   Sign In
                 </button>
+                {<RenderMessage message={message} status={status} />}
               </form>
             ) : (
               <form onSubmit={handleSignup}>
@@ -207,53 +308,86 @@ function App() {
           <form>
             <span>
               Forgot your password?
-              <button type="button" className="btn" onClick={toggleResetForm}>
+              <button
+                type="button"
+                className="btn"
+                onClick={() => {
+                  setContainerVisible(true);
+                  setResetTokenVisible(true);
+                }}
+              >
                 Reset Password
               </button>
             </span>
-            <div className="overlay-container">
-              <div className="popout-box">
-                <button
-                  type="button"
-                  className="exit-button"
-                  onClick={toggleResetForm}
-                >
-                  <IoMdClose />
-                </button>
-                <span>Insert your email for a password reset</span>
-                <input
-                  type="email"
-                  class="text-field"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <input
-                  type="text"
-                  class="text-field"
-                  placeholder="Reset Token"
-                  value={resetToken}
-                  onChange={(e) => setResetToken(e.target.value)}
-                />
-                <input
-                  type="password"
-                  class="text-field"
-                  placeholder="New Password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-                <input
-                  type="password"
-                  class="text-field"
-                  placeholder="Confirm password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-
-                <button type="button" className="btn">
-                  Reset Password
-                </button>
-              </div>
+            <div
+              className={`overlay-container ${containerVisible ? 'visible' : ''} `}
+            >
+              {resetTokenVisible && (
+                <div className="popout-box">
+                  <button
+                    type="button"
+                    className="exit-button"
+                    onClick={() => {
+                      setContainerVisible(false);
+                      setResetTokenVisible(false);
+                      setMessage(null);
+                      setStatus(null);
+                    }}
+                  >
+                    <IoMdClose />
+                  </button>
+                  <span>Insert your email for a password reset</span>
+                  <input
+                    type="email"
+                    className="text-field"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="btn"
+                    id="reset-token-button"
+                    onClick={requestToken}
+                  >
+                    Request Token
+                  </button>
+                  {<RenderMessage message={message} status={status} />}
+                </div>
+              )}
+              {resetPasswordVisible && (
+                <div className="popout-box">
+                  <button
+                    type="button"
+                    className="exit-button"
+                    onClick={() => {
+                      setContainerVisible(false);
+                      setResetPassowrdVisible(false);
+                    }}
+                  >
+                    <IoMdClose />
+                  </button>
+                  <span className="popout-box-text">Reset your password</span>
+                  <input
+                    type="password"
+                    className="text-field"
+                    placeholder="New Password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                  <input
+                    type="password"
+                    className="text-field"
+                    placeholder="Confirm password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                  <button type="button" className="btn" onClick={resetPassword}>
+                    Reset Your Password
+                  </button>
+                  {<RenderMessage message={message} status={status} />}
+                </div>
+              )}
             </div>
           </form>
         )}
