@@ -127,18 +127,19 @@ input {
 }
 
 .status-message {
-  height: 35px;
-  width: auto;
+  height: auto;
+  width: 100%;
   display: none;
-  padding: inherit;
   border-radius: 6px;
-  margin: 4px;
+  margin: 4px auto;
   text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   font-size: 12pt;
   justify-content: center;
-  padding: 15px;
-  flex-direction: column;
-  background-color: gray;
+  align-self: stretch;
+  padding: 10px;
+  flex-shrink: 1;
 }
 
 .status-message.success {

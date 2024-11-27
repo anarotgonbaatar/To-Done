@@ -118,7 +118,8 @@ function App() {
           await setTimeout(() => {
             setContainerVisible(false);
             setResetPassowrdVisible(false);
-
+            setMessage(null);
+            setStatus(null);
             navigate('/');
           }, 3000);
         } else {
@@ -156,6 +157,11 @@ function App() {
       if (response.status === 200) {
         const data = await response.json();
         setUser(data);
+        setMessage(null);
+        setStatus(null);
+      } else if (response.status === 401 || response.status === 400) {
+        setMessage('Incorrect Username/Password. Please try agan.');
+        setStatus('error');
       } else {
         setUser(null); // Reset user on failed login
         setTasks([]);
@@ -261,6 +267,7 @@ function App() {
                 <button type="submit" className="btn">
                   Sign In
                 </button>
+                {<RenderMessage message={message} status={status} />}
               </form>
             ) : (
               <form onSubmit={handleSignup}>
@@ -323,6 +330,8 @@ function App() {
                     onClick={() => {
                       setContainerVisible(false);
                       setResetTokenVisible(false);
+                      setMessage(null);
+                      setStatus(null);
                     }}
                   >
                     <IoMdClose />
