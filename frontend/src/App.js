@@ -215,8 +215,9 @@ function App() {
   return (
     <div className="App">
       {/* Header */}
-      <header className="container" id="header">
-        <span id="title">To-Done</span>
+      <div className="login-title" id="title">To-Done</div>
+      <header className="login-container" id="header">
+        
 
         {/* Conditional visibility */}
         {user ? (
