@@ -1,9 +1,53 @@
 #title {
-  font-size: xx-large;
+  font-size: 48px;
+  font-family: cursive, sans-serif;
+
+  margin-top: 40px;
+  margin-bottom: 20px;
+
+  text-align: center;
+
+  width: 220px;
+  height: 90px;
+  border: 2px solid white;
+  border-radius: 1rem;
+  margin: 1rem;
+  padding: 0.5rem;
+  background-color: rgba(63, 63, 63, 0.5);
+
 }
+
 #header {
   font-size: large;
   margin-bottom: 1rem;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+
+.App {
+  background-image: linear-gradient(to bottom right, rgb(232, 116, 255), rgb(150, 245, 240));
+  height: 100vh;
+  width: 100%;
+
+  background: linear-gradient(225deg, #be86ff, #e73c7e, #23a6d5, #52f074);
+	background-size: 400% 400%;
+	animation: gradient 15s ease infinite;
+  
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
 }
 
 .container {
@@ -15,6 +59,19 @@
   border-radius: 1rem;
   margin: 1rem;
   padding: 0.5rem;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 60vh;
+  height: 700px;
+  border: 2px solid white;
+  border-radius: 1rem;
+  margin: 1rem;
+  padding: 0.5rem;
+  background-color: rgba(63, 63, 63, 0.5);
 }
 
 .task-box {
@@ -37,10 +94,21 @@
   display: flex;
   flex-direction: row;
 }
+
 button {
-  width: auto;
-  padding: 1rem;
-  margin: 4px;
+  margin: 20px;
+  padding: 10px 20px;      
+  background-color: #b385fc; 
+  color: white;            
+  border: none;            
+  border-radius: 12px;    
+  font-size: 16px;         
+  cursor: pointer;         
+  transition: background-color 0.3s; 
+}
+
+button:hover {
+  background-color: #6f14a3; 
 }
 
 form {
