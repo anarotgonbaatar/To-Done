@@ -23,6 +23,10 @@ function App() {
   let [params] = useSearchParams();
   let navigate = useNavigate();
 
+  //New task
+  const [newTask, setNewTask] = useState('');
+  const [newTaskBool, setNewTaskBool] = useState(false);
+
   // Get tasks from backend WHEN user is logged in
   useEffect(() => {
     if (user) {
@@ -183,6 +187,26 @@ function App() {
     console.log('After logout - tasks should be empty:', tasks);
   };
 
+  const handleCreateTask = async (e) => {
+    e.preventDefault();
+    const data = {
+      name: newTask,
+      completed: newTaskBool
+    }
+    try {
+      const res = await fetch('http://localhost:3000/api/tasks', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data),
+      }) 
+      console.log(res);
+    } catch(error) {
+      console.error('Error creating task:', error);
+    }
+  }
+
   const deleteTask = async (id) => {
     try {
       await fetch(`http://localhost:5000/api/tasks/${id}`, {
@@ -226,6 +250,21 @@ function App() {
             <button onClick={handleLogout} className="btn" id="logout-btn">
               Logout
             </button>
+
+            <form onSubmit={handleCreateTask}>
+              <input
+                  type="text"
+                  class="text-field"
+                  placeholder="New Task"
+                  value={newTask}
+                  onChange={(e) => setNewTask(e.target.value)}
+                  required
+                />
+              
+              <button type="submit" className="btn">
+                  Create Task
+              </button>
+            </form>
           </div>
         ) : (
           <div className="auth-section">
@@ -298,7 +337,7 @@ function App() {
                 />
                 <span>Already have an account? Sign In</span>
                 <button type="submit" className="btn">
-                  Sign In
+                  Sign Up
                 </button>
               </form>
             )}
