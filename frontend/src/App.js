@@ -228,7 +228,6 @@ function App() {
       });
       const  tasksJSON = await response.json();
       setTasks(tasksJSON.tasks);
-      console.log(res);
     } catch(error) {
       console.error('Error creating task:', error);
     }
@@ -274,7 +273,7 @@ function App() {
         {/* Conditional visibility */}
         {user ? (
           <div className="auth-section">
-            <span>Welcome, {user.username}</span>
+            <span>Welcome, {username}</span>
             <button onClick={handleLogout} className="btn" id="logout-btn">
               Logout
             </button>
