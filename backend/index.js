@@ -9,7 +9,7 @@ const { apiRoute } = require('./api/routes/routes.js');
 require('dotenv').config();
 
 // MongoDB connection string (replace <dbname> with your DB name)
-const mongoURI = 'mongodb://localhost:27017/todo-app';
+const mongoURI = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@to-done.bdj13.mongodb.net/?retryWrites=true&w=majority&appName=To-Done`;
 
 // Connect to MongoDB
 mongoose
