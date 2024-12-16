@@ -59,10 +59,11 @@ body {
   flex-direction: column;
   align-items: center;
   width: 30rem;
-  border: 2px solid grey;
+  border: 2px solid white;
   border-radius: 1rem;
   margin: 1rem;
   padding: 0.5rem;
+  background-color: rgba(63, 63, 63, 0.5);
 }
 
 .login-container {
@@ -82,7 +83,11 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  background-image: url('../public/imgs/image.png');
 
+  color: black;
+
+  margin-top: 20px;
   width: 100%;
   padding: 0.5rem;
   border: 1px dashed grey;
