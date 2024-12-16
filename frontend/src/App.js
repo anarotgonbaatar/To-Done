@@ -1,6 +1,6 @@
 // States for tasks and authentication
 import React, { useState, useEffect } from 'react';
-import { FaTeeth, FaTrash } from 'react-icons/fa';
+import { FaTeeth, FaTrash, FaCheckCircle } from 'react-icons/fa';
 import './App.css';
 import { IoMdClose } from 'react-icons/io';
 import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
@@ -139,8 +139,25 @@ function App() {
     }
   }
   // Sign up function
-  const handleSignup = (e) => {
-    // ...
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    const data = {
+      email: email,
+      username: username,
+      password: password
+    }
+    try {
+      const res = await fetch('http://localhost:5000/api/createUser', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data),
+      }) 
+      console.log(res);
+    } catch(error) {
+      console.error('Error creating user:', error);
+    }
   };
 
   // Login function
@@ -201,6 +218,16 @@ function App() {
         },
         body: JSON.stringify(data),
       }) 
+      const response = await fetch('http://localhost:5000/api/tasks', {
+        mode: 'cors',
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const  tasksJSON = await response.json();
+      setTasks(tasksJSON.tasks);
       console.log(res);
     } catch(error) {
       console.error('Error creating task:', error);
@@ -221,7 +248,7 @@ function App() {
 
   const completeTask = async (id, completed) => {
     try {
-      await fetch(`http://localhost:5000/api/tasks/${id}`, {
+      await fetch(`http://localhost:3000/api/tasks/${id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ completed: !completed }),
@@ -231,6 +258,7 @@ function App() {
           task._id !== id ? { ...task, completed: !completed } : task,
         ),
       );
+      setTasks(tasks.filter((tasks) => tasks._id !== id));
     } catch (error) {
       console.error('Error updating task:', error);
     }
@@ -250,7 +278,7 @@ function App() {
             <button onClick={handleLogout} className="btn" id="logout-btn">
               Logout
             </button>
-
+            {/* Creating Tasks Section */}
             <form onSubmit={handleCreateTask}>
               <input
                   type="text"
@@ -441,11 +469,9 @@ function App() {
           {tasks.length > 0 ? (
             tasks.map((task) => (
               <div key={task._id} className="task-box">
-                <input
-                  type="checkbox"
-                  checked={task.completed}
-                  onChange={() => completeTask(task._id, task.completed)}
-                />
+                <button onClick={() => completeTask(task._id, task.completed)}>
+                  <FaCheckCircle className="icon" />
+                </button>
                 <span
                   className={`task-name ${task.completed ? 'completed' : ''}`}
                 >
@@ -457,7 +483,7 @@ function App() {
               </div>
             ))
           ) : (
-            <p>No tasks.</p>
+            <p style={{marginTop: "10px"}}>No tasks.</p>
           )}
         </div>
       )}
