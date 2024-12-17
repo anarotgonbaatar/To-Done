@@ -28,7 +28,6 @@ apiRoute.get('/tasks', verifyToken, getUserTasks);
 apiRoute.post('/login', comparePassword, authUser);
 apiRoute.post('/tasks', verifyToken, createTask);
 apiRoute.post('/createUser', checkUserExist, encryptPassword, createUser);
-apiRoute.post('/resetPassword');
 apiRoute.post('/resetToken', generatePasswordToken, emailToken);
 
 //Patch
@@ -36,7 +35,7 @@ apiRoute.patch('/resetPassword', compareToken, resetPassword);
 
 // Delete
 apiRoute.delete('/tasks/:id', verifyToken, deleteTask);
-//apiRoute.delete('/removeUser/:id', verifyResetToken, deleteUser);
+apiRoute.delete('/removeUser/:id', verifyResetToken, deleteUser);
 
 module.exports = {
   apiRoute,

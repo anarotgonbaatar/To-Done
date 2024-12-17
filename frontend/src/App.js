@@ -33,6 +33,7 @@ function App() {
     if (user) {
       const getTasks = async () => {
         try {
+          console.log('GET From api/task');
           const response = await fetch(`${backendURL}/api/tasks`, {
             mode: 'cors',
             method: 'GET',
@@ -152,7 +153,14 @@ function App() {
         },
         body: JSON.stringify(data),
       });
-      console.log(res);
+      if (res.status == 200) {
+        setMessage('User created sucessfully');
+        setStatus('success');
+      } else if (res.status == 409) {
+        const data = await res.json();
+        setMessage(data.status);
+        setStatus('error');
+      }
     } catch (error) {
       console.error('Error creating user:', error);
     }
@@ -211,6 +219,7 @@ function App() {
     try {
       const res = await fetch(`${backendURL}/api/tasks`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -364,6 +373,7 @@ function App() {
                 <button type="submit" className="btn">
                   Sign Up
                 </button>
+                {<RenderMessage message={message} status={status} />}
               </form>
             )}
           </div>
@@ -463,7 +473,7 @@ function App() {
         <div className="container" id="tasks-container">
           <span>Tasks</span>
           {/* Populate with tasks from backend here */}
-          {tasks.length > 0 ? (
+          {tasks.length >= 0 ? (
             tasks.map((task) => (
               <div key={task._id} className="task-box">
                 <button onClick={() => completeTask(task._id, task.completed)}>
