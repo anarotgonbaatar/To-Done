@@ -19,7 +19,7 @@ mongoose
   .catch((err) => console.error('Error connecting to MongoDB'));
 
 // Middleware
-app.use(cors());
+app.use(cors({ credentials: true }));
 // Allows requests from React frontend
 app.use(express.json()); // Parses JSON request bodies
 app.use(cookieParser()); // Allows us to access cookies from requests
