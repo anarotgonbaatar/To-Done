@@ -28,7 +28,7 @@ const checkUserExist = async (req, res, next) => {
     });
 
     //Now check for email as well
-    await User.findOne({ email: req.body.emaul }).then((userDoc) => {
+    await User.findOne({ email: req.body.email }).then((userDoc) => {
       if (userDoc) {
         //Return back if username is taken
         return res.status(409).json({
