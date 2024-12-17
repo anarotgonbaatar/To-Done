@@ -7,7 +7,8 @@ const User = require('./api/models/User.js');
 const cookieParser = require('cookie-parser');
 const { apiRoute } = require('./api/routes/routes.js');
 require('dotenv').config();
-
+console.log('Mongo Username', process.env.MONGO_USERNAME);
+console.log('Mongo Password', process.env.MONGO_PASSWORD);
 // MongoDB connection string (replace <dbname> with your DB name)
 const mongoURI = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@to-done.bdj13.mongodb.net/?retryWrites=true&w=majority&appName=To-Done`;
 
@@ -18,12 +19,8 @@ mongoose
   .catch((err) => console.error('Error connecting to MongoDB'));
 
 // Middleware
-app.use(
-  cors({
-    origin: 'http://localhost:3000',
-    credentials: true,
-  })
-); // Allows requests from React frontend
+app.use(cors());
+// Allows requests from React frontend
 app.use(express.json()); // Parses JSON request bodies
 app.use(cookieParser()); // Allows us to access cookies from requests
 app.use('/api', apiRoute);
