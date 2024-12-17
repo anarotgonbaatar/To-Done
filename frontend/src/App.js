@@ -23,6 +23,7 @@ function App() {
   let [params] = useSearchParams();
   let navigate = useNavigate();
 
+  const backendURL = process.env.REACT_APP_BACKEND_URL;
   //New task
   const [newTask, setNewTask] = useState('');
   const [newTaskBool, setNewTaskBool] = useState(false);
@@ -32,7 +33,7 @@ function App() {
     if (user) {
       const getTasks = async () => {
         try {
-          const response = await fetch('http://localhost:5000/api/tasks', {
+          const response = await fetch(`${backendURL}/api/tasks`, {
             mode: 'cors',
             method: 'GET',
             credentials: 'include',
@@ -68,7 +69,7 @@ function App() {
   //Request a reset password token with the use of the user's email.
   async function requestToken() {
     try {
-      const response = await fetch('http://localhost:5000/api/resetToken', {
+      const response = await fetch(`${backendURL}/api/resetToken`, {
         mode: 'cors',
         method: 'POST',
         headers: {
@@ -100,21 +101,18 @@ function App() {
       const token = params.get('token');
       console.log('This is token:', token);
       if (newPassword === confirmPassword) {
-        const response = await fetch(
-          'http://localhost:5000/api/resetPassword',
-          {
-            mode: 'cors',
-            method: 'PATCH',
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              resetToken: token,
-              newPassword: newPassword,
-            }),
+        const response = await fetch(`${backendURL}/api/resetPassword`, {
+          mode: 'cors',
+          method: 'PATCH',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        );
+          body: JSON.stringify({
+            resetToken: token,
+            newPassword: newPassword,
+          }),
+        });
 
         if (response.status === 200) {
           setMessage('Password reset correctly. You will be redirected soon.');
@@ -144,18 +142,18 @@ function App() {
     const data = {
       email: email,
       username: username,
-      password: password
-    }
+      password: password,
+    };
     try {
-      const res = await fetch('http://localhost:5000/api/createUser', {
+      const res = await fetch(`${backendURL}/api/createUser`, {
         method: 'POST',
         headers: {
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
-      }) 
+      });
       console.log(res);
-    } catch(error) {
+    } catch (error) {
       console.error('Error creating user:', error);
     }
   };
@@ -166,7 +164,7 @@ function App() {
     e.preventDefault(); // This single line was all I needed for it to work....
     try {
       console.log('Attempting POST request');
-      const response = await fetch('http://localhost:5000/api/login', {
+      const response = await fetch(`${backendURL}/api/login`, {
         mode: 'cors',
         method: 'POST',
         credentials: 'include',
@@ -208,17 +206,17 @@ function App() {
     e.preventDefault();
     const data = {
       name: newTask,
-      completed: newTaskBool
-    }
+      completed: newTaskBool,
+    };
     try {
-      const res = await fetch('http://localhost:3000/api/tasks', {
+      const res = await fetch(`${backendURL}/api/tasks`, {
         method: 'POST',
         headers: {
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
-      }) 
-      const response = await fetch('http://localhost:5000/api/tasks', {
+      });
+      const response = await fetch(`${backendURL}/api/tasks`, {
         mode: 'cors',
         method: 'GET',
         credentials: 'include',
@@ -226,16 +224,16 @@ function App() {
           'Content-Type': 'application/json',
         },
       });
-      const  tasksJSON = await response.json();
+      const tasksJSON = await response.json();
       setTasks(tasksJSON.tasks);
-    } catch(error) {
+    } catch (error) {
       console.error('Error creating task:', error);
     }
-  }
+  };
 
   const deleteTask = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/tasks/${id}`, {
+      await fetch(`${backendURL}/api/tasks/${id}`, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -247,7 +245,7 @@ function App() {
 
   const completeTask = async (id, completed) => {
     try {
-      await fetch(`http://localhost:3000/api/tasks/${id}`, {
+      await fetch(`${backendURL}/api/tasks/${id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ completed: !completed }),
@@ -266,10 +264,10 @@ function App() {
   return (
     <div className="App">
       {/* Header */}
-      <div className="login-title" id="title">To-Done</div>
+      <div className="login-title" id="title">
+        To-Done
+      </div>
       <header className="login-container" id="header">
-        
-
         {/* Conditional visibility */}
         {user ? (
           <div className="auth-section">
@@ -280,16 +278,16 @@ function App() {
             {/* Creating Tasks Section */}
             <form onSubmit={handleCreateTask}>
               <input
-                  type="text"
-                  class="text-field"
-                  placeholder="New Task"
-                  value={newTask}
-                  onChange={(e) => setNewTask(e.target.value)}
-                  required
-                />
-              
+                type="text"
+                class="text-field"
+                placeholder="New Task"
+                value={newTask}
+                onChange={(e) => setNewTask(e.target.value)}
+                required
+              />
+
               <button type="submit" className="btn">
-                  Create Task
+                Create Task
               </button>
             </form>
           </div>
@@ -482,7 +480,7 @@ function App() {
               </div>
             ))
           ) : (
-            <p style={{marginTop: "10px"}}>No tasks.</p>
+            <p style={{ marginTop: '10px' }}>No tasks.</p>
           )}
         </div>
       )}
