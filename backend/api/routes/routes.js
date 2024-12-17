@@ -34,7 +34,7 @@ apiRoute.patch('/resetPassword', compareToken, resetPassword);
 
 // Delete
 apiRoute.delete('/tasks/:id', verifyToken, deleteTask);
-apiRoute.delete('/removeUser/:id', verifyToken, deleteUser);
+apiRoute.delete('/removeUser/', verifyToken, deleteUser);
 
 module.exports = {
   apiRoute,
