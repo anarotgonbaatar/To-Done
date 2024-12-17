@@ -16,7 +16,6 @@ const {
   generatePasswordToken,
   emailToken,
   compareToken,
-  verifyResetToken,
 } = require('../middleware/middleware.js');
 const { getUserByEmail } = require('../services/services.js');
 const apiRoute = Router();
@@ -35,7 +34,7 @@ apiRoute.patch('/resetPassword', compareToken, resetPassword);
 
 // Delete
 apiRoute.delete('/tasks/:id', verifyToken, deleteTask);
-apiRoute.delete('/removeUser/:id', verifyResetToken, deleteUser);
+apiRoute.delete('/removeUser/:id', verifyToken, deleteUser);
 
 module.exports = {
   apiRoute,
