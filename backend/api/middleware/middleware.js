@@ -24,11 +24,20 @@ const checkUserExist = async (req, res, next) => {
       if (userDoc) {
         //Return back if username is taken
         return res.status(409).json({ status: 'Username is already taken' });
-      } else {
-        //Else go to next middleware function for hashing password
-        next();
       }
     });
+
+    //Now check for email as well
+    await User.findOne({ email: req.body.emaul }).then((userDoc) => {
+      if (userDoc) {
+        //Return back if username is taken
+        return res.status(409).json({
+          status: 'Email is already in use. Try resetting your password.',
+        });
+      }
+    });
+    //Username and Email fine, move to next function
+    next();
   } catch (err) {
     console.log(err);
   }
@@ -113,6 +122,7 @@ const authUser = async (req, res, next) => {
 //Grabs cookie token and proceeds to next middleware function
 const verifyToken = async (req, res, next) => {
   const token = req.cookies.token;
+  console.log(token);
   try {
     //If token is verified it'll go to next middleware function required.
     const validToken = jwt.verify(token, process.env.MY_SECRET);
@@ -158,7 +168,7 @@ const emailToken = async (req, res) => {
       to: req.user.email,
       from: process.env.SENDER_EMAIL,
       subject: 'Password Reset Token',
-      html: `<h1>Here is your password reset token http://localhost:3000/reset-password?token=${req.user.resetToken}</h1>`,
+      html: `<h1>Here is your password reset token https://localhost:3000/reset-password?token=${req.user.resetToken}</h1>`,
     })
     .then((result) => {
       return res.status(200).json({ message: result });
