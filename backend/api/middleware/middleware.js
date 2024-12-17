@@ -94,14 +94,15 @@ const authUser = async (req, res, next) => {
     const token = jwt.sign({ id: res.user._id }, process.env.MY_SECRET, {
       expiresIn: '1h',
     });
-    res.status(200).cookie('token', token, {
+    res.cookie('token', token, {
       httpOnly: true,
       sameSite: 'None',
     });
 
     //Return back User object with token and taskID's
-    res.json({
+    res.status(200).json({
       user: res.user,
+      message: 'user Auth sucessfully',
     });
   } catch (err) {
     console.log(err);
