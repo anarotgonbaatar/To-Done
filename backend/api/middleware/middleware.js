@@ -96,8 +96,8 @@ const authUser = async (req, res, next) => {
     });
     res.cookie('token', token, {
       httpOnly: true, // Prevent client-side JavaScript access
-      sameSite: 'None', // Default setting; allows cookies for same-origin or top-level navigation
-      secure: false, // Allow cookies to be sent over HTTP
+      sameSite: 'None', // Allows cookies to be sent in cross-origin requests
+      secure: true, // Requires cookies to be sent over HTTPS only
     });
 
     //Return back User object with token and taskID's
