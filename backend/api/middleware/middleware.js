@@ -96,6 +96,7 @@ const authUser = async (req, res, next) => {
     });
     res.status(200).cookie('token', token, {
       httpOnly: true,
+      sameSite: 'None',
     });
 
     //Return back User object with token and taskID's
