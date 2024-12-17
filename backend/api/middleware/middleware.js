@@ -95,9 +95,9 @@ const authUser = async (req, res, next) => {
       expiresIn: '1h',
     });
     res.cookie('token', token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'None',
+      httpOnly: true, // Prevent client-side JavaScript access
+      sameSite: 'None', // Default setting; allows cookies for same-origin or top-level navigation
+      secure: false, // Allow cookies to be sent over HTTP
     });
 
     //Return back User object with token and taskID's
