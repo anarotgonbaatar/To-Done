@@ -19,24 +19,21 @@ const { getUserByEmail, getTaskList } = require('../services/services.js');
 
 const checkUserExist = async (req, res, next) => {
   try {
-    //Check if username is taken.
-    await User.findOne({ username: req.body.username }).then((userDoc) => {
-      if (userDoc) {
-        //Return back if username is taken
-        return res.status(409).json({ status: 'Username is already taken' });
-      }
-    });
+    // Check if username is already taken
+    const userByUsername = await User.findOne({ username: req.body.username });
+    if (userByUsername) {
+      return res.status(409).json({ status: 'Username is already taken' });
+    }
 
-    //Now check for email as well
-    await User.findOne({ email: req.body.email }).then((userDoc) => {
-      if (userDoc) {
-        //Return back if username is taken
-        return res.status(409).json({
-          status: 'Email is already in use. Try resetting your password.',
-        });
-      }
-    });
-    //Username and Email fine, move to next function
+    // Check if email is already in use
+    const userByEmail = await User.findOne({ email: req.body.email });
+    if (userByEmail) {
+      return res.status(409).json({
+        status: 'Email is already in use. Try resetting your password.',
+      });
+    }
+
+    // If no conflicts, proceed to the next middleware
     next();
   } catch (err) {
     console.log(err);
