@@ -165,7 +165,7 @@ const emailToken = async (req, res) => {
       to: req.user.email,
       from: process.env.SENDER_EMAIL,
       subject: 'Password Reset Token',
-      html: `<h1>Here is your password reset token https://localhost:3000/reset-password?token=${req.user.resetToken}</h1>`,
+      html: `<h1>Here is your password reset token ${process.env.FRONTEND_URL}reset-password?token=${req.user.resetToken}</h1>`,
     })
     .then((result) => {
       return res.status(200).json({ message: result });

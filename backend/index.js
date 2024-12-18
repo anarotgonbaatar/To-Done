@@ -19,7 +19,12 @@ mongoose
   .catch((err) => console.error('Error connecting to MongoDB'));
 
 // Middleware
-app.use(cors({ origin: ['https://localhost:3000', 'https://to-done-frontend.onrender.com'], credentials: true }));
+app.use(
+  cors({
+    origin: ['https://localhost:3000', process.env.FRONTEND_URL],
+    credentials: true,
+  })
+);
 // Allows requests from React frontend
 app.use(express.json()); // Parses JSON request bodies
 app.use(cookieParser()); // Allows us to access cookies from requests
